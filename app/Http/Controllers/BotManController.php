@@ -67,6 +67,8 @@ class BotManController extends Controller
           $status = false;
           $angka=0;
           $poin=0;
+          $pilihan = [];
+
 
           if (!empty($data_kata_tot)) {
 
@@ -75,17 +77,61 @@ class BotManController extends Controller
             if ($hasils !== null && $hasils !== '' && $hasils->count() > 0 ) {
               foreach ($hasils as $hasil) {
                 for ($i=0; $i < count($data_kata_tot); $i++) {
-                  if (strpos($hasil->tanya , $data_kata_tot[$i]) !== false) {
+                  // nanti dicocokkan untuk kalimat singkatnya, jangan pakai strpos
+                  if (strstr($hasil->tanya , $data_kata_tot[$i]) !== false) {
                       $poin++;
                   }
                 }
                 if ($poin > 0) {
-                  $pilihan[] = array($angka , $hasil->id , $poin);
+                  // disini dihitung tf-idfnya
+                  $tf = $poin/count($data_kata_tot);
+                  $idf = log10(count($hasils)/$poin);
+                  $tf_idf = $tf*$idf;
+                  $pilihan[] = array($hasil->id , $tf_idf , $hasil->jawab);
                   $angka++;
+                }else{
+                  $data_pilihan = 'kosong';
                 }
+
                 $poin = 0;
               }
-              $bot->reply((string)$pilihan[1][2]);
+              // disini nanti di sorting;
+              if (sizeof($pilihan) > 1) {
+
+                for ($i=0; $i < sizeof($pilihan); $i++) {
+                  // $bot->reply('iterasi ke '.($i+1));
+                  for ($j=0; $j < (sizeof($pilihan) - 1); $j++) {
+                    if ($pilihan[$j][1] < $pilihan[$j+1][1]) {
+                      $temp1 = $pilihan[$j+1][1];
+                      $pilihan[$j+1][1] = $pilihan[$j][1];
+                      $pilihan[$j][1] = $temp1;
+
+                      $temp2 = $pilihan[$j+1][0];
+                      $pilihan[$j+1][0] = $pilihan[$j][0];
+                      $pilihan[$j][0] = $temp2;
+
+                      $temp3 = $pilihan[$j+1][2];
+                      $pilihan[$j+1][2] = $pilihan[$j][2];
+                      $pilihan[$j][2] = $temp3;
+
+                    }
+                  }
+                  // ini hanya untuk debuggin
+                  // for ($k=0; $k < sizeof($pilihan); $k++) {
+                  //   $bot->reply((string)$pilihan[$k][1]);
+                  // }
+                    // $bot->reply($pilihan[0][1]);
+                }
+                // $bot->reply('yang benar di bagian ti-idf'.$pilihan[0][1].' dengan jawaban '.$pilihan[0][2]);
+                $bot->reply($pilihan[0][2]);
+              }
+              if (empty($pilihan)) {
+                $bot->reply((string)$data_pilihan);
+              }
+
+                // $bot->reply('jadi yang tadinya = '.$tes1.' & '.$tes2.' menjadi '.$pilihan[0][1].' & '.$pilihan[1][1].' dann yang tadinya jawabannya'.$tes1_j.' & '.$tes2_j.' menjadi '.$pilihan[0][0].' & '.$pilihan[1][0]);
+
+
             }else{
               $bot->reply('disini nanti crawling browws');
             }
