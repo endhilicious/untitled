@@ -6,6 +6,7 @@ use BotMan\BotMan\BotMan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Conversations\ExampleConversation;
+// use App\Providers\Scrapper;;
 
 class BotManController extends Controller
 {
@@ -148,6 +149,22 @@ class BotManController extends Controller
     public function tinker()
     {
         return view('tinker');
+    }
+    public function craling()
+    {
+        $crawler = Scrapper::request('GET', 'http://malesbanget.com/');
+        $url = $crawler->filter('div.wrapleft ul.middleContent > li')
+                                ->each(function($node) {
+         $title = $node->filter('div.details h3 > a')
+                                ->extract(array('_text', 'href'));
+         $img = $node->filter('div.thumbContainer img')->attr('src');
+         return [
+          'title' => $title[0][0],
+          'link' => $title[0][1],
+          'image' => $img,
+         ];
+        });
+      return response($url);
     }
 
     /**

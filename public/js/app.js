@@ -87536,7 +87536,8 @@ var Products = function (_Component) {
       newMessage: null,
       pesan: '',
       isMine: true,
-      balas: []
+      balas: [],
+      hasilCrawling: []
     };
     _this.tesPesan = _this.tesPesan.bind(_this);
     return _this;
@@ -87558,21 +87559,37 @@ var Products = function (_Component) {
   }, {
     key: '_addMessage',
     value: function _addMessage(text, attachment, isMine) {
+      var _this2 = this;
+
       this.state.messages.push({
         'isMine': isMine,
         'user': isMine ? '👨' : '🤖',
         'text': text,
         'attachment': attachment || {}
       });
-      this.setState({
-        balas: this.state.balas.concat(text),
-        isMine: isMine
-      });
+      if (text == 'kosong') {
+
+        fetch('api/crawling/', {
+          method: 'get'
+        }).then(function (response) {
+          return response.json();
+        }).then(function (data) {
+          _this2.setState({
+            balas: _this2.state.balas.concat(data[0]),
+            isMine: isMine
+          });
+        });
+      } else {
+        this.setState({
+          balas: this.state.balas.concat(text),
+          isMine: isMine
+        });
+      }
     }
   }, {
     key: 'tesPesan',
     value: function tesPesan() {
-      var _this2 = this;
+      var _this3 = this;
 
       var messageText = this.state.pesan;
       this.state.pesan = '';
@@ -87588,24 +87605,28 @@ var Products = function (_Component) {
         userId: 9999999,
         message: messageText
       }).then(function (response) {
-        var messages = response.data.messages || ['maaf '];
+        var messages = response.data.messages || ['maaf , pertanyaannya tidak bisa terjawab'];
         messages.forEach(function (msg) {
-          _this2._addMessage(msg.text, msg.attachment, false);
+          _this3._addMessage(msg.text, msg.attachment, false);
         });
-        _this2.inputchats.value = '';
+        _this3.inputchats.value = '';
       }, function (response) {});
     }
   }, {
     key: 'setBalas',
     value: function setBalas() {
-      var _this3 = this;
+      var _this4 = this;
 
       return this.state.balas.map(function (produk) {
+        // if (produk == 'kosong') {
+        //   this.lakukanCrawling();
+        // }else{
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'li',
-          { style: { backgroundColor: _this3.state.isMine ? 'green' : 'yellow' } },
+          { style: { backgroundColor: _this4.state.isMine ? 'green' : 'yellow' } },
           produk
         );
+        // }
       });
     }
   }, {
@@ -87613,10 +87634,43 @@ var Products = function (_Component) {
     value: function handleSubmit(e) {
       e.preventDefault();
     }
+
+    // ambil utk bagian crawling
+
+  }, {
+    key: 'lakukanCrawling',
+    value: function lakukanCrawling() {
+      var _this5 = this;
+
+      /*Fetch API for post request */
+      fetch('api/crawling/', {
+        method: 'get'
+        /* headers are important*/
+        // headers: {
+        //   'Accept': 'application/json',
+        //   'Content-Type': 'application/json'
+        // }
+      }).then(function (response) {
+        return response.json();
+      }).then(function (data) {
+        //update the state of products and currentProduct
+        // this.setState((prevState)=> ({
+        //     hasilCrawling: prevState.hasilCrawling.concat(data)
+        // }))
+        // console.log(data[0]);
+        return data.map(function (crawl) {
+          return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'li',
+            { style: { backgroundColor: _this5.state.isMine ? 'green' : 'yellow' } },
+            data[0]
+          );
+        });
+      });
+    }
   }, {
     key: 'render',
     value: function render() {
-      var _this4 = this,
+      var _this6 = this,
           _React$createElement;
 
       var kiriChat = {
@@ -87663,12 +87717,12 @@ var Products = function (_Component) {
               'div',
               { style: position_chat },
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text', style: msg_style, ref: function ref(el) {
-                  return _this4.inputchats = el;
+                  return _this6.inputchats = el;
                 }, className: 'inputChat', name: 'chatInputan', onChange: function onChange(e) {
-                  return _this4.handleInput(e);
+                  return _this6.handleInput(e);
                 } }),
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', (_React$createElement = { type: 'text', style: chat_style }, _defineProperty(_React$createElement, 'type', 'submit'), _defineProperty(_React$createElement, 'value', 'Submsit'), _defineProperty(_React$createElement, 'onClick', function onClick() {
-                return _this4.tesPesan();
+                return _this6.tesPesan();
               }), _defineProperty(_React$createElement, 'className', 'btn btn-danger'), _React$createElement))
             )
           )

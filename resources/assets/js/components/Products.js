@@ -15,6 +15,7 @@ class Products extends Component {
         pesan:'',
         isMine:true,
         balas:[],
+        hasilCrawling: [],
     }
     this.tesPesan = this.tesPesan.bind(this);
   }
@@ -37,10 +38,26 @@ class Products extends Component {
             'text': text,
             'attachment': attachment || {},
         });
-        this.setState({
-          balas: this.state.balas.concat(text),
-          isMine: isMine,
-        });
+        if (text == 'kosong') {
+
+          fetch( 'api/crawling/', {
+              method:'get',
+          })
+          .then(response => {
+              return response.json();
+          })
+          .then( data => {
+            this.setState({
+              balas: this.state.balas.concat(data[0]),
+              isMine: isMine,
+            });
+          });
+        }else{
+          this.setState({
+            balas: this.state.balas.concat(text),
+            isMine: isMine,
+          });
+        }
     }
 
     tesPesan() {
@@ -58,7 +75,7 @@ class Products extends Component {
             userId: 9999999,
             message: messageText
         }).then(response => {
-            let messages = response.data.messages || ['maaf '];
+            let messages = response.data.messages || ['maaf , pertanyaannya tidak bisa terjawab'];
             messages.forEach(msg => {
                 this._addMessage(msg.text, msg.attachment, false);
             });
@@ -69,15 +86,49 @@ class Products extends Component {
 
       setBalas(){
         return this.state.balas.map(produk=>{
-          return(
-            <li style={{backgroundColor:((this.state.isMine)?'green':'yellow')}}>
-              {produk}
-            </li>
-          )
+          // if (produk == 'kosong') {
+          //   this.lakukanCrawling();
+          // }else{
+            return(
+              <li style={{backgroundColor:((this.state.isMine)?'green':'yellow')}}>
+                {produk}
+              </li>
+            )
+          // }
         });
       }
       handleSubmit(e){
         e.preventDefault();
+      }
+
+      // ambil utk bagian crawling
+      lakukanCrawling(){
+         /*Fetch API for post request */
+         fetch( 'api/crawling/', {
+             method:'get',
+             /* headers are important*/
+             // headers: {
+             //   'Accept': 'application/json',
+             //   'Content-Type': 'application/json'
+             // }
+         })
+         .then(response => {
+             return response.json();
+         })
+         .then( data => {
+             //update the state of products and currentProduct
+             // this.setState((prevState)=> ({
+             //     hasilCrawling: prevState.hasilCrawling.concat(data)
+             // }))
+             // console.log(data[0]);
+             return data.map(crawl=>{
+               return(
+                 <li style={{backgroundColor:((this.state.isMine)?'green':'yellow')}}>
+                   {data[0]}
+                 </li>
+               )
+             });
+         })
       }
   render() {
 
