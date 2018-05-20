@@ -6,6 +6,7 @@ use BotMan\BotMan\BotMan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Conversations\ExampleConversation;
+use Scrapper;
 // use App\Providers\Scrapper;;
 
 class BotManController extends Controller
@@ -69,12 +70,12 @@ class BotManController extends Controller
           $angka=0;
           $poin=0;
           $pilihan = [];
+          $pilihan_crawl = [];
 
 
           if (!empty($data_kata_tot)) {
 
             $hasils = DB::table('tanyajawab')->get();
-
             if ($hasils !== null && $hasils !== '' && $hasils->count() > 0 ) {
               foreach ($hasils as $hasil) {
                 for ($i=0; $i < count($data_kata_tot); $i++) {
@@ -127,7 +128,20 @@ class BotManController extends Controller
                 $bot->reply($pilihan[0][2]);
               }
               if (empty($pilihan)) {
-                $bot->reply((string)$data_pilihan);
+                // $bot->reply((string)$data_pilihan);
+
+            	  $crawler = Scrapper::request('GET', 'http://localhost/belajaronlineku/forum/');
+            	  $url = $crawler->filter('li.list_pertanyaan')->each(function($node) {
+
+            	  	$pertanyaan =  $node->filter('p.pertanyaan')->text();
+                  $jawaban =  $node->filter('p.jawaban')->text();
+                  $pilihan_crawl[] = array($pertanyaan , $jawaban);
+            	  	return [
+            	  		'pertanyaan' => $pertanyaan,
+              	  	'jawaban' => $jawaban
+            	  	];
+                });
+                  $bot->reply((string)$url[0]['jawaban']);
               }
 
                 // $bot->reply('jadi yang tadinya = '.$tes1.' & '.$tes2.' menjadi '.$pilihan[0][1].' & '.$pilihan[1][1].' dann yang tadinya jawabannya'.$tes1_j.' & '.$tes2_j.' menjadi '.$pilihan[0][0].' & '.$pilihan[1][0]);

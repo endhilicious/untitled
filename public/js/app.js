@@ -87559,8 +87559,6 @@ var Products = function (_Component) {
   }, {
     key: '_addMessage',
     value: function _addMessage(text, attachment, isMine) {
-      var _this2 = this;
-
       this.state.messages.push({
         'isMine': isMine,
         'user': isMine ? '👨' : '🤖',
@@ -87573,11 +87571,13 @@ var Products = function (_Component) {
           method: 'get'
         }).then(function (response) {
           return response.json();
+          console.log(response);
         }).then(function (data) {
-          _this2.setState({
-            balas: _this2.state.balas.concat(data[0]),
-            isMine: isMine
-          });
+          // this.setState({
+          //   balas: this.state.balas.concat(data[0].title),
+          //   isMine: isMine,
+          // });
+          console.log(data);
         });
       } else {
         this.setState({
@@ -87589,44 +87589,42 @@ var Products = function (_Component) {
   }, {
     key: 'tesPesan',
     value: function tesPesan() {
-      var _this3 = this;
+      var _this2 = this;
 
-      var messageText = this.state.pesan;
-      this.state.pesan = '';
-      if (messageText === 'clear') {
-        this.state.messages = [];
-        return;
+      if (this.state.pesan != '') {
+        var messageText = this.state.pesan;
+        this.state.pesan = '';
+        if (messageText === 'clear') {
+          this.state.messages = [];
+          return;
+        }
+
+        this._addMessage(messageText, null, true);
+
+        __WEBPACK_IMPORTED_MODULE_3_axios___default.a.post('api/botman/', {
+          driver: 'web',
+          userId: 9999999,
+          message: messageText
+        }).then(function (response) {
+          var messages = response.data.messages || ['maaf , pertanyaannya tidak bisa terjawab'];
+          messages.forEach(function (msg) {
+            _this2._addMessage(msg.text, msg.attachment, false);
+          });
+          _this2.inputchats.value = '';
+        }, function (response) {});
       }
-
-      this._addMessage(messageText, null, true);
-
-      __WEBPACK_IMPORTED_MODULE_3_axios___default.a.post('api/botman/', {
-        driver: 'web',
-        userId: 9999999,
-        message: messageText
-      }).then(function (response) {
-        var messages = response.data.messages || ['maaf , pertanyaannya tidak bisa terjawab'];
-        messages.forEach(function (msg) {
-          _this3._addMessage(msg.text, msg.attachment, false);
-        });
-        _this3.inputchats.value = '';
-      }, function (response) {});
     }
   }, {
     key: 'setBalas',
     value: function setBalas() {
-      var _this4 = this;
+      var _this3 = this;
 
       return this.state.balas.map(function (produk) {
-        // if (produk == 'kosong') {
-        //   this.lakukanCrawling();
-        // }else{
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'li',
-          { style: { backgroundColor: _this4.state.isMine ? 'green' : 'yellow' } },
+          { style: { backgroundColor: _this3.state.isMine ? 'green' : 'yellow' } },
           produk
         );
-        // }
       });
     }
   }, {
@@ -87636,41 +87634,39 @@ var Products = function (_Component) {
     }
 
     // ambil utk bagian crawling
+    // lakukanCrawling(){
+    //    /*Fetch API for post request */
+    //    fetch( 'api/crawling/', {
+    //        method:'get',
+    //        /* headers are important*/
+    //        // headers: {
+    //        //   'Accept': 'application/json',
+    //        //   'Content-Type': 'application/json'
+    //        // }
+    //    })
+    //    .then(response => {
+    //        return response.json();
+    //    })
+    //    .then( data => {
+    //        //update the state of products and currentProduct
+    //        // this.setState((prevState)=> ({
+    //        //     hasilCrawling: prevState.hasilCrawling.concat(data)
+    //        // }))
+    //        // console.log(data[0]);
+    //        return data.map(crawl=>{
+    //          return(
+    //            <li style={{backgroundColor:((this.state.isMine)?'green':'yellow')}}>
+    //              {data[0]}
+    //            </li>
+    //          )
+    //        });
+    //    })
+    // }
 
-  }, {
-    key: 'lakukanCrawling',
-    value: function lakukanCrawling() {
-      var _this5 = this;
-
-      /*Fetch API for post request */
-      fetch('api/crawling/', {
-        method: 'get'
-        /* headers are important*/
-        // headers: {
-        //   'Accept': 'application/json',
-        //   'Content-Type': 'application/json'
-        // }
-      }).then(function (response) {
-        return response.json();
-      }).then(function (data) {
-        //update the state of products and currentProduct
-        // this.setState((prevState)=> ({
-        //     hasilCrawling: prevState.hasilCrawling.concat(data)
-        // }))
-        // console.log(data[0]);
-        return data.map(function (crawl) {
-          return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            'li',
-            { style: { backgroundColor: _this5.state.isMine ? 'green' : 'yellow' } },
-            data[0]
-          );
-        });
-      });
-    }
   }, {
     key: 'render',
     value: function render() {
-      var _this6 = this,
+      var _this4 = this,
           _React$createElement;
 
       var kiriChat = {
@@ -87695,7 +87691,7 @@ var Products = function (_Component) {
         null,
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'div',
-          { className: 'col-md-12 col-sm-12' },
+          { className: 'col-md-6 col-sm-6' },
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'center',
             null,
@@ -87717,12 +87713,12 @@ var Products = function (_Component) {
               'div',
               { style: position_chat },
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text', style: msg_style, ref: function ref(el) {
-                  return _this6.inputchats = el;
+                  return _this4.inputchats = el;
                 }, className: 'inputChat', name: 'chatInputan', onChange: function onChange(e) {
-                  return _this6.handleInput(e);
+                  return _this4.handleInput(e);
                 } }),
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', (_React$createElement = { type: 'text', style: chat_style }, _defineProperty(_React$createElement, 'type', 'submit'), _defineProperty(_React$createElement, 'value', 'Submsit'), _defineProperty(_React$createElement, 'onClick', function onClick() {
-                return _this6.tesPesan();
+                return _this4.tesPesan();
               }), _defineProperty(_React$createElement, 'className', 'btn btn-danger'), _React$createElement))
             )
           )

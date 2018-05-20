@@ -45,12 +45,14 @@ class Products extends Component {
           })
           .then(response => {
               return response.json();
+              console.log(response);
           })
           .then( data => {
-            this.setState({
-              balas: this.state.balas.concat(data[0]),
-              isMine: isMine,
-            });
+            // this.setState({
+            //   balas: this.state.balas.concat(data[0].title),
+            //   isMine: isMine,
+            // });
+            console.log(data);
           });
         }else{
           this.setState({
@@ -61,6 +63,7 @@ class Products extends Component {
     }
 
     tesPesan() {
+      if (this.state.pesan != '') {
         let messageText = this.state.pesan;
         this.state.pesan = '';
         if (messageText === 'clear') {
@@ -82,19 +85,16 @@ class Products extends Component {
             this.inputchats.value = '';
         }, response => {
         });
+      }
     }
 
       setBalas(){
         return this.state.balas.map(produk=>{
-          // if (produk == 'kosong') {
-          //   this.lakukanCrawling();
-          // }else{
             return(
               <li style={{backgroundColor:((this.state.isMine)?'green':'yellow')}}>
                 {produk}
               </li>
             )
-          // }
         });
       }
       handleSubmit(e){
@@ -102,34 +102,34 @@ class Products extends Component {
       }
 
       // ambil utk bagian crawling
-      lakukanCrawling(){
-         /*Fetch API for post request */
-         fetch( 'api/crawling/', {
-             method:'get',
-             /* headers are important*/
-             // headers: {
-             //   'Accept': 'application/json',
-             //   'Content-Type': 'application/json'
-             // }
-         })
-         .then(response => {
-             return response.json();
-         })
-         .then( data => {
-             //update the state of products and currentProduct
-             // this.setState((prevState)=> ({
-             //     hasilCrawling: prevState.hasilCrawling.concat(data)
-             // }))
-             // console.log(data[0]);
-             return data.map(crawl=>{
-               return(
-                 <li style={{backgroundColor:((this.state.isMine)?'green':'yellow')}}>
-                   {data[0]}
-                 </li>
-               )
-             });
-         })
-      }
+      // lakukanCrawling(){
+      //    /*Fetch API for post request */
+      //    fetch( 'api/crawling/', {
+      //        method:'get',
+      //        /* headers are important*/
+      //        // headers: {
+      //        //   'Accept': 'application/json',
+      //        //   'Content-Type': 'application/json'
+      //        // }
+      //    })
+      //    .then(response => {
+      //        return response.json();
+      //    })
+      //    .then( data => {
+      //        //update the state of products and currentProduct
+      //        // this.setState((prevState)=> ({
+      //        //     hasilCrawling: prevState.hasilCrawling.concat(data)
+      //        // }))
+      //        // console.log(data[0]);
+      //        return data.map(crawl=>{
+      //          return(
+      //            <li style={{backgroundColor:((this.state.isMine)?'green':'yellow')}}>
+      //              {data[0]}
+      //            </li>
+      //          )
+      //        });
+      //    })
+      // }
   render() {
 
     const kiriChat = {
@@ -151,7 +151,7 @@ class Products extends Component {
     }
     return(
       <div>
-        <div className="col-md-12 col-sm-12">
+        <div className="col-md-6 col-sm-6">
           <center><h3>produk list</h3></center>
           <ul>
           {this.setBalas()}
