@@ -1,0 +1,24 @@
+.headerChat{
+  background-color: lightblue;
+  z-index: -1;
+}
+.outputChats>div:nth-child(odd){
+  width: 100%;
+  float: left;
+}
+.outputChats>div:nth-child(even){
+  width: 100%;
+  float: right;
+}
+.outputChats>div:nth-child(odd)>p{
+  float: left;
+  padding: 10px;
+  background-color: #7edbff;
+  max-width: 50% !important;
+}
+.outputChats>div:nth-child(even)>p{
+  float: right;
+  padding: 10px;
+  background-color: #c4c4c4;
+  max-width: 50% !important;
+}

@@ -18,50 +18,78 @@ class BotManController extends Controller
     {
         $botman = app('botman');
         $botman->hears('{data}', function ($bot , $data) {
+          if (strstr('halo|halooo|hai|hei|haihai|assalamualaikum|tes|tesss|teesss' , $data) !== FALSE) {
+            $a=array(
+              "hai, selamat datang di aidu, ada yang bisa kami bantu ?",
+              "selamat datang , ada yang ingin saya bantu ?",
+            );
+            $rand_answer_a=array_rand($a , 1);
+            $bot->reply($a[$rand_answer_a]);
+          }elseif (strstr($data , 'bertanya') || strstr($data , 'tanya')) {
+            $b=array(
+              "silahkan bertanya di saya, saya harap saya bisa menjawab pertanyaan anda terkait perlajaran yaahh ^_^",
+              "oke , silahkan tanyakan pelajaran yang mau di tanyakan ",
+            );
+            $rand_answer_b=array_rand($b , 1);
+            $bot->reply($b[$rand_answer_b]);
+          }elseif (strstr($data , 'terima kasih') || strstr('thank|thanks|arigato' , $data)) {
+            $b=array(
+              "sama-sama , saya sangat senang membantu kalian",
+              "iya, senang bisa membantu anda",
+            );
+            $rand_answer_b=array_rand($b , 1);
+            $bot->reply($b[$rand_answer_b]);
+          }else{
 
 
-          // bagiannya army
-    $bank_data = DB::table('bank_data')->get();
-    $data_kata_tot = [];
-		$kata_singkat = [];
-		$kata_tdk_singkat = [];
-		$dimasukkan_ke_singkat = false;
-		$dimasukkan_ke_tdk_singkat = false;
-		$hitung = 1;
 
-		$hasil  = explode(' ', $data);
-	 	for ($i=0; $i < count($hasil); $i++) {
-		 	foreach ($bank_data as $dbs) {
-		 		if ($dbs->kalimat_singkat == $hasil[$i]) {
-		 			if ($dimasukkan_ke_tdk_singkat == true) {
-		 				array_pop($kata_tdk_singkat);
-		 			}
-		 			array_push($kata_singkat, $dbs->kalimat_tdk_singkat);
-		 			$dimasukkan_ke_singkat = true;
-		 		}else{
-		 			if ($dimasukkan_ke_singkat == false) {
-		 				if ($dimasukkan_ke_tdk_singkat == false) {
-		 					array_push($kata_tdk_singkat, $hasil[$i]);
-		 					$dimasukkan_ke_tdk_singkat = true;
-		 				}
-		 			}
-		 		}
 
-		 		if ($hitung == count($bank_data)) {
-		 			$dimasukkan_ke_tdk_singkat = false;
-		 			$dimasukkan_ke_singkat = false;
-		 			$hitung = 1;
-		 		}else{
-		 			$hitung++;
-		 		}
-		 	}
-	 	}
-    for ($i=0; $i < count($kata_singkat); $i++) {
-      array_push($data_kata_tot , $kata_singkat[$i] );
-    }
-    for ($a=0; $a < count($kata_tdk_singkat); $a++) {
-      array_push($data_kata_tot , $kata_tdk_singkat[$a] );
-    }
+                // bagiannya army
+          $bank_data = DB::table('bank_data')->get();
+          $data_kata_tot = [];
+          $data_kata_tot1 = [];
+      		$kata_singkat = [];
+      		$kata_tdk_singkat = [];
+      		$dimasukkan_ke_singkat = false;
+      		$dimasukkan_ke_tdk_singkat = false;
+      		$hitung = 1;
+
+
+      		$hasil  = explode(' ', $data);
+      	 	for ($i=0; $i < count($hasil); $i++) {
+      		 	foreach ($bank_data as $dbs) {
+      		 		if ($dbs->kalimat_singkat == $hasil[$i]) {
+      		 			if ($dimasukkan_ke_tdk_singkat == true) {
+      		 				array_pop($kata_tdk_singkat);
+      		 			}
+      		 			array_push($kata_singkat, $dbs->kalimat_tdk_singkat);
+      		 			$dimasukkan_ke_singkat = true;
+      		 		}else{
+      		 			if ($dimasukkan_ke_singkat == false) {
+      		 				if ($dimasukkan_ke_tdk_singkat == false) {
+      		 					array_push($kata_tdk_singkat, $hasil[$i]);
+      		 					$dimasukkan_ke_tdk_singkat = true;
+      		 				}
+      		 			}
+      		 		}
+
+      		 		if ($hitung == count($bank_data)) {
+      		 			$dimasukkan_ke_tdk_singkat = false;
+      		 			$dimasukkan_ke_singkat = false;
+      		 			$hitung = 1;
+      		 		}else{
+      		 			$hitung++;
+      		 		}
+      		 	}
+      	 	}
+          for ($i=0; $i < count($kata_singkat); $i++) {
+            array_push($data_kata_tot , $kata_singkat[$i] );
+            array_push($data_kata_tot1 , $kata_singkat[$i] );
+          }
+          for ($a=0; $a < count($kata_tdk_singkat); $a++) {
+            array_push($data_kata_tot , $kata_tdk_singkat[$a] );
+            array_push($data_kata_tot1 , $kata_tdk_singkat[$a] );
+          }
 
           // end bagiannya army
 
@@ -69,39 +97,83 @@ class BotManController extends Controller
           $status = false;
           $angka=0;
           $poin=0;
+          $kemunculanDiDokumen = 0;
+          $kemunculanKataDiDokumen = [];
           $pilihan = [];
           $pilihan_crawl = [];
+          $tfKemunculan = [];
+          $tfKemunculanAll = [];
+          $pembobotanTFIDF = 0;
 
 
-          if (!empty($data_kata_tot)) {
+
+          if (count($data_kata_tot1) > 1) {
 
             $hasils = DB::table('tanyajawab')->get();
+            $hasils_2 = DB::table('tanyajawab')->get();
             if ($hasils !== null && $hasils !== '' && $hasils->count() > 0 ) {
+
+                // tambahan
+                $apakahTelahMasuk = false;
+                $nomorHasils3 = 0;
               foreach ($hasils as $hasil) {
-                for ($i=0; $i < count($data_kata_tot); $i++) {
-                  // nanti dicocokkan untuk kalimat singkatnya, jangan pakai strpos
-                  if (strstr($hasil->tanya , $data_kata_tot[$i]) !== false) {
-                      $poin++;
+
+                for ($i=0; $i < count($data_kata_tot1); $i++) {
+
+                  if (strstr($hasil->tanya , $data_kata_tot1[$i]) !== false) {
+
+                    if ($apakahTelahMasuk == false) {
+
+                      if (array_key_exists($data_kata_tot1[$i], $tfKemunculanAll)) {
+                        $tfKemunculanAll[$data_kata_tot1[$i]] += 1;
+                      }else{
+                        $tfKemunculanAll[$data_kata_tot1[$i]] = 1;
+                      }
+                      $apakahTelahMasuk = true;
+                    }
                   }
+                  $apakahTelahMasuk = false;
                 }
-                if ($poin > 0) {
-                  // disini dihitung tf-idfnya
-                  $tf = $poin/count($data_kata_tot);
-                  $idf = log10(count($hasils)/$poin);
-                  $tf_idf = $tf*$idf;
-                  $pilihan[] = array($hasil->id , $tf_idf , $hasil->jawab);
-                  $angka++;
-                }else{
-                  $data_pilihan = 'kosong';
-                }
-
-                $poin = 0;
               }
-              // disini nanti di sorting;
-              if (sizeof($pilihan) > 1) {
 
+
+                $nomorHasils2 = 0;
+                $nomorHasils2Fix = 0;
+                foreach ($hasils_2 as $tambahan) {
+                  $tfKemunculan[] = array();
+                  for ($j=0; $j < count($data_kata_tot); $j++) {
+                    if (strstr($tambahan->tanya , $data_kata_tot[$j]) !== false) {
+                      if (array_key_exists($data_kata_tot[$j], $tfKemunculan[$nomorHasils2Fix])) {
+                        $tfKemunculan[$nomorHasils2Fix][$data_kata_tot[$j]] += 1;
+                      }else{
+                        $tfKemunculan[$nomorHasils2Fix][$data_kata_tot[$j]] = 1;
+                        $poin++;
+                      }
+                    }
+
+                    if ($j == count($data_kata_tot)-1) {
+
+                      if (!empty($tfKemunculan[$nomorHasils2Fix])) {
+                        for ($o=0; $o < count($data_kata_tot); $o++) {
+                          if (array_key_exists($data_kata_tot[$o], $tfKemunculan[$nomorHasils2Fix])) {
+                            $tfFix = $tfKemunculan[$nomorHasils2Fix][$data_kata_tot[$o]];
+                            $idf = log10(count($hasils)/$tfKemunculanAll[$data_kata_tot[$o]]);
+                            $tf_idf = $tfFix*$idf;
+                            $pembobotanTFIDF += $tf_idf;
+                          }
+                        }
+                        $pilihan[] = array($tambahan->id , $pembobotanTFIDF , $tambahan->jawab);
+                        $pembobotanTFIDF = 0;
+                        $nomorHasils2Fix++;
+                      }
+                    //
+
+                    }
+                  }
+                  $nomorHasils2++;
+                }
+              if (sizeof($pilihan) > 1) {
                 for ($i=0; $i < sizeof($pilihan); $i++) {
-                  // $bot->reply('iterasi ke '.($i+1));
                   for ($j=0; $j < (sizeof($pilihan) - 1); $j++) {
                     if ($pilihan[$j][1] < $pilihan[$j+1][1]) {
                       $temp1 = $pilihan[$j+1][1];
@@ -118,41 +190,41 @@ class BotManController extends Controller
 
                     }
                   }
-                  // ini hanya untuk debuggin
-                  // for ($k=0; $k < sizeof($pilihan); $k++) {
-                  //   $bot->reply((string)$pilihan[$k][1]);
-                  // }
-                    // $bot->reply($pilihan[0][1]);
                 }
-                // $bot->reply('yang benar di bagian ti-idf'.$pilihan[0][1].' dengan jawaban '.$pilihan[0][2]);
+
                 $bot->reply($pilihan[0][2]);
               }
               if (empty($pilihan)) {
-                // $bot->reply((string)$data_pilihan);
 
             	  $crawler = Scrapper::request('GET', 'http://localhost/belajaronlineku/forum/');
             	  $url = $crawler->filter('li.list_pertanyaan')->each(function($node) {
 
             	  	$pertanyaan =  $node->filter('p.pertanyaan')->text();
                   $jawaban =  $node->filter('p.jawaban')->text();
-                  $pilihan_crawl[] = array($pertanyaan , $jawaban);
+                  // $pilihan_crawl[] = array($pertanyaan , $jawaban);
             	  	return [
             	  		'pertanyaan' => $pertanyaan,
               	  	'jawaban' => $jawaban
             	  	];
                 });
-                  $bot->reply((string)$url[0]['jawaban']);
+                // for ($i=0; $i < count($data_kata_tot); $i++) {
+                //   if (strstr($pertanyaan , $data_kata_tot[$i])) {
+                //     // code...
+                //   }
+                // }
+                  $bot->reply((string)$url[1]['jawaban']);
+                  // $bot->reply((string)$data_kata_tot[0]);
               }
-
-                // $bot->reply('jadi yang tadinya = '.$tes1.' & '.$tes2.' menjadi '.$pilihan[0][1].' & '.$pilihan[1][1].' dann yang tadinya jawabannya'.$tes1_j.' & '.$tes2_j.' menjadi '.$pilihan[0][0].' & '.$pilihan[1][0]);
-
-
             }else{
               $bot->reply('disini nanti crawling browws');
             }
 
+          }else{
+            $bot->reply((string)$data_kata_tot[0].' apa yang anda maksud ?');
           }
+        }
         });
+
 
         $botman->listen();
     }

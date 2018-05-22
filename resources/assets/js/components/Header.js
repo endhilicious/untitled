@@ -87,6 +87,7 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
     const close_btn ={
       position:'fixed',
       marginButton: 50,
+      zIndex :999,
     }
 
       return(

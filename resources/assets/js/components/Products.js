@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Router, Route, browserHistory } from 'react-router';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
+import './list_product.css';
 
 /* Main Component */
 class Products extends Component {
@@ -59,6 +60,7 @@ class Products extends Component {
             balas: this.state.balas.concat(text),
             isMine: isMine,
           });
+
         }
     }
 
@@ -90,11 +92,11 @@ class Products extends Component {
 
       setBalas(){
         return this.state.balas.map(produk=>{
-            return(
-              <li style={{backgroundColor:((this.state.isMine)?'green':'yellow')}}>
-                {produk}
-              </li>
-            )
+          return(
+            <div>
+              <p>{produk}</p>
+            </div>
+          )
         });
       }
       handleSubmit(e){
@@ -150,12 +152,12 @@ class Products extends Component {
       bottom : 0,
     }
     return(
-      <div>
-        <div className="col-md-6 col-sm-6">
-          <center><h3>produk list</h3></center>
-          <ul>
+      <div className="col-md-6 col-sm-6 col-xs-3">
+        <div>
+          <center className="headerChat"><h3>Si Teman Belajar</h3></center>
+          <div className="outputChats">
           {this.setBalas()}
-          </ul>
+          </div>
           <form onSubmit={this.handleSubmit}>
           <div style={position_chat}>
             <input type="text" style={msg_style} ref={el => this.inputchats = el} className="inputChat" name="chatInputan" onChange={(e)=>this.handleInput(e)} />

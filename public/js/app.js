@@ -77999,7 +77999,8 @@ var Header = function (_Component) {
       };
       var close_btn = {
         position: 'fixed',
-        marginButton: 50
+        marginButton: 50,
+        zIndex: 999
       };
 
       return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -87505,6 +87506,8 @@ var ListKimia = function (_Component) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_dom__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_axios__ = __webpack_require__(119);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__list_product_css__ = __webpack_require__(491);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__list_product_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__list_product_css__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -87514,6 +87517,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 
 
 
@@ -87617,13 +87621,15 @@ var Products = function (_Component) {
   }, {
     key: 'setBalas',
     value: function setBalas() {
-      var _this3 = this;
-
       return this.state.balas.map(function (produk) {
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-          'li',
-          { style: { backgroundColor: _this3.state.isMine ? 'green' : 'yellow' } },
-          produk
+          'div',
+          null,
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'p',
+            null,
+            produk
+          )
         );
       });
     }
@@ -87666,7 +87672,7 @@ var Products = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this4 = this,
+      var _this3 = this,
           _React$createElement;
 
       var kiriChat = {
@@ -87688,22 +87694,22 @@ var Products = function (_Component) {
       };
       return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
-        null,
+        { className: 'col-md-6 col-sm-6 col-xs-3' },
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'div',
-          { className: 'col-md-6 col-sm-6' },
+          null,
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'center',
-            null,
+            { className: 'headerChat' },
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
               'h3',
               null,
-              'produk list'
+              'Si Teman Belajar'
             )
           ),
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            'ul',
-            null,
+            'div',
+            { className: 'outputChats' },
             this.setBalas()
           ),
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -87713,12 +87719,12 @@ var Products = function (_Component) {
               'div',
               { style: position_chat },
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text', style: msg_style, ref: function ref(el) {
-                  return _this4.inputchats = el;
+                  return _this3.inputchats = el;
                 }, className: 'inputChat', name: 'chatInputan', onChange: function onChange(e) {
-                  return _this4.handleInput(e);
+                  return _this3.handleInput(e);
                 } }),
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', (_React$createElement = { type: 'text', style: chat_style }, _defineProperty(_React$createElement, 'type', 'submit'), _defineProperty(_React$createElement, 'value', 'Submsit'), _defineProperty(_React$createElement, 'onClick', function onClick() {
-                return _this4.tesPesan();
+                return _this3.tesPesan();
               }), _defineProperty(_React$createElement, 'className', 'btn btn-danger'), _React$createElement))
             )
           )
@@ -98810,6 +98816,54 @@ var ListFisika = function (_Component) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 488 */,
+/* 489 */,
+/* 490 */,
+/* 491 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(492);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(484)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../../node_modules/css-loader/index.js!./list_product.css", function() {
+			var newContent = require("!!../../../../node_modules/css-loader/index.js!./list_product.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 492 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(483)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".headerChat{\n  background-color: lightblue;\n  z-index: -1;\n}\n.outputChats>div:nth-child(odd){\n  width: 100%;\n  float: left;\n}\n.outputChats>div:nth-child(even){\n  width: 100%;\n  float: right;\n}\n.outputChats>div:nth-child(odd)>p{\n  float: left;\n  padding: 10px;\n  background-color: #7edbff;\n  max-width: 50% !important;\n}\n.outputChats>div:nth-child(even)>p{\n  float: right;\n  padding: 10px;\n  background-color: #c4c4c4;\n  max-width: 50% !important;\n}\n", ""]);
+
+// exports
+
 
 /***/ })
 /******/ ]);
